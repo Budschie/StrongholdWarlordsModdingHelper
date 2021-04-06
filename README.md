@@ -4,6 +4,8 @@ This is the repository of my stronghold modding helper.
 This tool aims at supporting texture packs for the game Stronghold:Warlords by FireFly.
 It utilizes ZIP-Archives as modding files. For modders, I will put the specification in the description.
 
+![Logo](https://raw.githubusercontent.com/Budschie/StrongholdWarlordsModdingHelper/master/StrongholdWarlordsModdingHelper/Images/BudschieModdingTool.png)
+
 ## How to use as a user
 Here is a rough outline on what you have to do to add a mod to Stronghold:Warlords:
 1. Click on File->Open game. Then, you have to navigate to your Stronghold:Warlords directory. An example, where this directory might be, would be:
@@ -23,6 +25,9 @@ Here is a rough outline on what you have to do to add a mod to Stronghold:Warlor
    want to continue, here you can simply click "Yes".
    
 5. 1/2: If you want to save your mod setup, you can go to File->Save mod configuration. You will be prompted if the save succeeded.
+
+## I have provided a sample mod that you can find in this very repository. Here is the link:
+https://github.com/Budschie/StrongholdWarlordsModdingHelper/blob/master/StrongholdWarlordsModdingHelper/TestSHWMOD.shwmod
 
 ## How to use as a modder
 If you want to create a mod that is compatible with this mod loader, this guide is a good starting point.
