@@ -7,7 +7,7 @@ It utilizes ZIP-Archives as modding files. For modders, I will put the specifica
 ![Logo](https://raw.githubusercontent.com/Budschie/StrongholdWarlordsModdingHelper/master/StrongholdWarlordsModdingHelper/Images/BudschieModdingTool.png)
 
 ## Special thanks
-Special thanks goes to @Chriskraft9/AskaborDE for being an enormous help for this project with his experience in Stronghold Modding and
+Special thanks goes to the discord user @Chriskraft9/AskaborDE for being an enormous help for this project with his experience in Stronghold Modding and
 having inspired me to add various features.
 
 ## How to use as a user
