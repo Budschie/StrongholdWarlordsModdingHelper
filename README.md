@@ -23,3 +23,35 @@ Here is a rough outline on what you have to do to add a mod to Stronghold:Warlor
    want to continue, here you can simply click "Yes".
    
 5. 1/2: If you want to save your mod setup, you can go to File->Save mod configuration. You will be prompted if the save succeeded.
+
+## How to use as a modder
+If you want to create a mod that is compatible with this mod loader, this guide is a good starting point.
+First, I'd recommend you to use something like 7-zip, but you can in theory even use the windows explorer, but
+that can be a bit nerve-taking, as you'd have to juggle around with file endings the most time. Anyways, let's get started.
+
+First, you have to create a ZIP-Archive. For the purpose of this guide, let's call our imaginary ZIP-Archive "Test.zip".
+Now, you have to put a file named "ModInfo.xml" into the root of said ZIP file. This step is mandatory, the program checks
+if the zip file has this mod info, and it would refuse to load the mod file if there would be no ModInfo.xml.
+The contaings of the XML file are as following:
+The root tag has to be named "Mod".
+
+Here is a list of attributes, that are all mandatory:
+
+Attribute name | Attribute description
+-------------- | ----------------------
+ModDescription | This mod description will be displayed when you click on the mod. 
+ModName | This is the title of the mod. It will be displayed as a header of the description.
+ModId | This is used to identify the mod. It must be ***unique***, as it is used to determine if a mod is present twice. If you were to load a mod that has the same ModId as another, the program would simply refuse to do that.
+
+A simple ModInfo.xml file would look like this:
+```XML
+<Mod>
+    <ModMetadata ModDescription="This is a test mod.\n\nThis is an escape test." ModName="Test Mod" ModId="testmodbudschie"/>
+</Mod>
+```
+Et Voilà, you already have the hardest part behind you. If you want to override anything from Stronghold:Warlords, your file should simply have the same path in your mod file. If there were to be a file in the assets named "IDontLikeStronghold3.dds" at "textures/stronghold3haters", you can simply create that very path with your own "IDontLikeStronghold3.dds" file at the same location in your mod file.
+
+# Now, here comes a small, but still important step:
+The only thing you have to do now, is to rename your mod file from "Test.zip" to (for example) "Test.shwmod". Now, you can deploy your file, and everybody
+can install it on their computer :)
+
