@@ -6,6 +6,10 @@ It utilizes ZIP-Archives as modding files. For modders, I will put the specifica
 
 ![Logo](https://raw.githubusercontent.com/Budschie/StrongholdWarlordsModdingHelper/master/StrongholdWarlordsModdingHelper/Images/BudschieModdingTool.png)
 
+## Special thanks
+Special thanks goes to @Chriskraft9/AskaborDE for being an enormous help for this project with his experience in Stronghold Modding and
+having inspired me to add various features.
+
 ## How to use as a user
 Here is a rough outline on what you have to do to add a mod to Stronghold:Warlords:
 1. Click on File->Open game. Then, you have to navigate to your Stronghold:Warlords directory. An example, where this directory might be, would be:
