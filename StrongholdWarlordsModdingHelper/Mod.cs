@@ -16,12 +16,14 @@ namespace StrongholdWarlordsModdingHelper
         private string description;
         private string filePath;
         private bool enabled;
+        private List<string> directoryAdditions = new();
 
         public string Name { get => name; set => name = value; }
         public string Description { get => description; set => description = value; }
         public string FilePath { get => filePath; set => filePath = value; }
         public bool Enabled { get => enabled; set => enabled = value; }
         public string ModId { get => modId; set => modId = value; }
+        public List<string> DirectoryAdditions { get => directoryAdditions; set => directoryAdditions = value; }
 
         public Mod(string name, string description, string modId, string filePath)
         {
@@ -41,6 +43,8 @@ namespace StrongholdWarlordsModdingHelper
             string modDescription = null;
             string modId = null;
 
+            List<string> directoryList = new List<string>();
+
             using(ZipArchive file = ZipFile.OpenRead(path))
             {
                 if (!file.Entries.Any(archive => archive.FullName == "ModInfo.xml"))
@@ -56,6 +60,16 @@ namespace StrongholdWarlordsModdingHelper
                 if (nodeList.Count != 1)
                     throw new MalformedModFileException("The mod file is malformed. Reason: The mod metadata is not complete.");
 
+                XmlNodeList additionalDirectory = modInfo.DocumentElement.GetElementsByTagName("AdditionalDirectory");
+
+                foreach(XmlNode directoryNode in additionalDirectory)
+                {
+                    string pathToAdditionalDirectory = directoryNode.Attributes.GetNamedItem("path").Value;
+
+                    if (pathToAdditionalDirectory != null)
+                        directoryList.Add(pathToAdditionalDirectory);
+                }
+
                 XmlNode node = nodeList[0];
 
                 modName = node.Attributes.GetNamedItem("ModName").Value;
@@ -65,7 +79,9 @@ namespace StrongholdWarlordsModdingHelper
                 modId = node.Attributes.GetNamedItem("ModId").Value;
             }
 
-            return new Mod(modName, modDescription, modId, path);
+            Mod mod = new Mod(modName, modDescription, modId, path);
+            mod.directoryAdditions = directoryList;
+            return mod;
         }
     }
 }
