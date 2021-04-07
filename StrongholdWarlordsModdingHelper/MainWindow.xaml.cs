@@ -13,10 +13,12 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Threading;
 using System.Windows.Forms;
 using MessageBox = System.Windows.MessageBox;
 using OpenFileDialog = System.Windows.Forms.OpenFileDialog;
 using ListViewItem = System.Windows.Controls.ListViewItem;
+using CheckBox = System.Windows.Controls.CheckBox;
 
 namespace StrongholdWarlordsModdingHelper
 {
@@ -26,6 +28,7 @@ namespace StrongholdWarlordsModdingHelper
     public partial class MainWindow : Window
     {
         private string currentOpenedPath = null;
+        private volatile bool lockBool = false;
         private ModDirectory modDirectory = null;
         private ModApplierHandler modApplierHandler = null;
         private ModdingHelperConfig config;
@@ -53,6 +56,11 @@ namespace StrongholdWarlordsModdingHelper
 
         private void Open_Click(object sender, RoutedEventArgs e)
         {
+            if (lockBool)
+                return;
+
+            lockBool = true;
+
             FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
             folderBrowserDialog.SelectedPath = config.LastStrongholdWarlordsLocation + "/";
             folderBrowserDialog.Description = "Please choose your Stronghold Warlords root directory.";
@@ -88,6 +96,8 @@ namespace StrongholdWarlordsModdingHelper
                     UpdateListView();
                 }
             }
+
+            lockBool = false;
         }
 
         private void UpdateListView()
@@ -102,6 +112,11 @@ namespace StrongholdWarlordsModdingHelper
 
         private void ImportMod_Click(object sender, RoutedEventArgs e)
         {
+            if (lockBool)
+                return;
+
+            lockBool = true;
+
             OpenFileDialog fileDialog = new OpenFileDialog();
             fileDialog.Title = "Please open your mod file.";
             fileDialog.Filter = "Stronghold Warlords Mod file (*.shwmod)|*.shwmod";
@@ -140,6 +155,8 @@ namespace StrongholdWarlordsModdingHelper
                     }
                 }
             }
+
+            lockBool = false;
         }
 
         private void SaveModConfig_Click(object sender, RoutedEventArgs e)
@@ -170,6 +187,11 @@ namespace StrongholdWarlordsModdingHelper
 
         private void Remove_Click(object sender, RoutedEventArgs e)
         {
+            if (lockBool)
+                return;
+
+            lockBool = true;
+
             if(modListView.SelectedItems.Count > 0)
             {
                 if(MessageBox.Show("Do you really want to remove this mod from the list?", "Removal of mod", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
@@ -180,24 +202,62 @@ namespace StrongholdWarlordsModdingHelper
                     UpdateListView();
                 }
             }
+
+            lockBool = false;
         }
 
         private void ApplyMods_Click(object sender, RoutedEventArgs e)
         {
-            if(modApplierHandler == null)
+            if (lockBool)
+                return;
+
+            lockBool = true;
+
+            if (modApplierHandler == null)
             {
                 MessageBox.Show("The game directory isn't properly bound yet.", "Mod config error", MessageBoxButton.OK, MessageBoxImage.Error);
+                lockBool = false;
             }
             else
             {
                 if (MessageBox.Show("Do you want to apply the mods?", "Mods", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                 {
-                    modApplierHandler.CreateBackup();
-                    modApplierHandler.ApplyBackup();
-                    modApplierHandler.ApplyMods(modDirectory.Mods);
-                    MessageBox.Show("Successfully added " + modDirectory.Mods.Count + " mods!", "Mod loading", MessageBoxButton.OK, MessageBoxImage.Asterisk);
+
+                    ModdingApplicationTaskList moddingApplicationTaskList = new ModdingApplicationTaskList(new ModdingProgressTask("Creating backup"), new ModdingProgressTask("Applying backup"), new ModdingProgressTask("Loading assets of Stronghold:Warlords"), new ModdingProgressTask("Applying mods"), new ModdingProgressTask("Merging config.xml files"));
+                    moddingApplicationTaskList.Show();
+
+                    Thread executionThread = new Thread(() => 
+                    {
+                        ModApplierHandler.StartTask startTask = (task) => moddingApplicationTaskList.Dispatcher.Invoke(() => moddingApplicationTaskList.StartTask(task));
+                        ModApplierHandler.FinishTask finishTask = (task) => moddingApplicationTaskList.Dispatcher.Invoke(() => moddingApplicationTaskList.FinishTask(task));
+
+                        startTask(0);
+                        modApplierHandler.CreateBackup();
+                        finishTask(0);
+                        startTask(1);
+                        modApplierHandler.ApplyBackup();
+                        finishTask(1);
+                        modApplierHandler.ApplyMods(modDirectory.Mods, startTask, finishTask);
+
+                        Dispatcher.Invoke(() =>
+                        {
+                            modListView.IsEnabled = true;
+                            lockBool = false;
+                            moddingApplicationTaskList.SetDone();
+                            MessageBox.Show("Successfully added " + modDirectory.Mods.Count + " mods!", "Mod loading", MessageBoxButton.OK, MessageBoxImage.Asterisk);
+                        });
+                    });
+
+                    modListView.IsEnabled = false;
+
+                    executionThread.Start();
+                }
+                else
+                {
+                    lockBool = false;
                 }
             }
         }
     }
+
 }

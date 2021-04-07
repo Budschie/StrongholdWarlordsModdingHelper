@@ -1,0 +1,22 @@
+﻿<Window x:Class="StrongholdWarlordsModdingHelper.ModdingApplicationTaskList"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:StrongholdWarlordsModdingHelper"
+        mc:Ignorable="d"
+        Title="ModdingApplicationTaskList" Height="230" Width="450">
+    <Grid>
+        <ProgressBar Name="progressBar" Margin="10,10,10,10" Height="30" IsIndeterminate="False" VerticalAlignment="Bottom"/>
+
+        <TextBlock Name="taskTitle" TextAlignment="Center" Margin="10,10,10,10" FontSize="20">
+            Task x of x: bla bla bla
+        </TextBlock>
+
+        <ScrollViewer Margin="10,52,10,75">
+            <TextBlock Name="taskText" TextWrapping="Wrap">
+
+            </TextBlock>
+        </ScrollViewer>
+    </Grid>
+</Window>

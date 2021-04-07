@@ -48,7 +48,7 @@
                                 <GridViewColumn Header="Is Enabled" Width="80">
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
-                                            <CheckBox IsChecked="{Binding Enabled}">
+                                            <CheckBox IsChecked="{Binding Enabled}" Name="checkboxEnabled">
                                                 
                                             </CheckBox>
                                         </DataTemplate>

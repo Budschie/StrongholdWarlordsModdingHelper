@@ -81,7 +81,10 @@ namespace StrongholdWarlordsModdingHelper
 
         }
 
-        public void ApplyMods(List<Mod> mods)
+        public delegate void StartTask(int task);
+        public delegate void FinishTask(int task);
+
+        public void ApplyMods(List<Mod> mods, StartTask startTask, FinishTask finishTask)
         {
             HashSet<string> appliedFiles = new HashSet<string>();
 
@@ -92,9 +95,14 @@ namespace StrongholdWarlordsModdingHelper
 
             Directory.CreateDirectory(assetsFolder + "/ModAssets");
 
+            startTask(2);
+
             // This looks very interesting. First, we open the assets file. Then, we open the mod zip archive. And finally, we are opening a stream, which is used to copy the files in the assets directory of the game.
             using (ZipArchive assetsFile = ZipFile.Open(assetsFolder + "/textures.ultrahigh.pak", ZipArchiveMode.Update))
             {
+                finishTask(2);
+                startTask(3);
+
                 foreach(Mod mod in mods)
                 {
                     foreach(string additionalPath in mod.DirectoryAdditions)
@@ -123,7 +131,7 @@ namespace StrongholdWarlordsModdingHelper
 
                                         using (Stream assetsEntryTargetStream = assetsEntry.Open())
                                         {
-                                            zipStream.CopyTo(assetsEntryTargetStream);
+                                            //zipStream.CopyTo(assetsEntryTargetStream);
                                         }
                                     }
                                 }
@@ -133,7 +141,7 @@ namespace StrongholdWarlordsModdingHelper
                                     {
                                         using (FileStream assetFileStream = new FileStream(assetsFolder + "/ModAssets/" + entry.Name, FileMode.Create))
                                         {
-                                            zipStream.CopyTo(assetFileStream);
+                                            //zipStream.CopyTo(assetFileStream);
                                         }
                                     }
                                 }
@@ -145,7 +153,7 @@ namespace StrongholdWarlordsModdingHelper
                                     {
                                         using (FileStream assetFileStream = new FileStream(assetsFolder + "/" + entry.FullName, FileMode.Create))
                                         {
-                                            zipStream.CopyTo(assetFileStream);
+                                            //zipStream.CopyTo(assetFileStream);
                                         }
                                     }
                                 }
@@ -153,10 +161,14 @@ namespace StrongholdWarlordsModdingHelper
                         }
                     }
                 }
+
+                finishTask(3);
             }
 
+            startTask(4);
             //xmlDocument.Save(assetsFolder + "/config.xml");
             File.WriteAllText(assetsFolder + "/config.xml", xmlFile);
+            finishTask(4);
 
             // We have to do this as else the memory consumption would be enormous, at around 2 GB AFTER the operation. And if we were to invoke this method more than once, the memory consumption would only rise. So, as a safety measure, we put this statement in.
             System.GC.Collect();
