@@ -6,6 +6,10 @@ It utilizes ZIP-Archives as modding files. For modders, I will put the specifica
 
 ![Logo](https://raw.githubusercontent.com/Budschie/StrongholdWarlordsModdingHelper/master/StrongholdWarlordsModdingHelper/Images/BudschieModdingTool.png)
 
+## Special thanks
+Special thanks goes to the discord user @Chriskraft9/AskaborDE for being an enormous help for this project with his experience in Stronghold Modding and
+having inspired me to add various features.
+
 ## How to use as a user
 Here is a rough outline on what you have to do to add a mod to Stronghold:Warlords:
 1. Click on File->Open game. Then, you have to navigate to your Stronghold:Warlords directory. An example, where this directory might be, would be:
@@ -51,10 +55,14 @@ ModId | This is used to identify the mod. It must be ***unique***, as it is used
 A simple ModInfo.xml file would look like this:
 ```XML
 <Mod>
+     <!-- This is the metadata of the mod. It describes the mod to the user, and also contains the mod id. -->
     <ModMetadata ModDescription="This is a test mod.\n\nThis is an escape test." ModName="Test Mod" ModId="testmodbudschie"/>
+   
+     <!-- This tells the mod loader to add this file to the config.xml file. Remember that there should be this very file present in the root of the archive. The name should be unique, so that this file won't be overridden by another. -->
+     <AdditionalDirectory path="testmodbudschie.v" />
 </Mod>
 ```
-Et Voilà, you already have the hardest part behind you. If you want to override anything from Stronghold:Warlords, your file should simply have the same path in your mod file. If there were to be a file in the assets named "IDontLikeStronghold3.dds" at "textures/stronghold3haters", you can simply create that very path with your own "IDontLikeStronghold3.dds" file at the same location in your mod file.
+Et Voilà, you already have the hardest part behind you. If you want to override anything from Stronghold:Warlords, your file should simply have the same path in your mod file. If there were to be a file in the assets named "IDontLikeStronghold3.dds" at "textures/stronghold3haters", you can simply create that very path with your own "IDontLikeStronghold3.dds" file at the same location in your mod file. And if you want to override a castle, you can simply do that by creating your own "castles" directory in your zip archive, then the Warlords directory, and in that, you put the file that you want to override. With that said, happy modding.
 
 # Now, here comes a small, but still important step:
 The only thing you have to do now, is to rename your mod file from "Test.zip" to (for example) "Test.shwmod". Now, you can deploy your file, and everybody
