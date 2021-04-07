@@ -131,7 +131,7 @@ namespace StrongholdWarlordsModdingHelper
 
                                         using (Stream assetsEntryTargetStream = assetsEntry.Open())
                                         {
-                                            //zipStream.CopyTo(assetsEntryTargetStream);
+                                            zipStream.CopyTo(assetsEntryTargetStream);
                                         }
                                     }
                                 }
@@ -141,7 +141,7 @@ namespace StrongholdWarlordsModdingHelper
                                     {
                                         using (FileStream assetFileStream = new FileStream(assetsFolder + "/ModAssets/" + entry.Name, FileMode.Create))
                                         {
-                                            //zipStream.CopyTo(assetFileStream);
+                                            zipStream.CopyTo(assetFileStream);
                                         }
                                     }
                                 }
@@ -153,7 +153,7 @@ namespace StrongholdWarlordsModdingHelper
                                     {
                                         using (FileStream assetFileStream = new FileStream(assetsFolder + "/" + entry.FullName, FileMode.Create))
                                         {
-                                            //zipStream.CopyTo(assetFileStream);
+                                            zipStream.CopyTo(assetFileStream);
                                         }
                                     }
                                 }
