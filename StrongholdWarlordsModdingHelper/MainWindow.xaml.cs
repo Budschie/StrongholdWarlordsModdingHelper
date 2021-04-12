@@ -223,7 +223,7 @@ namespace StrongholdWarlordsModdingHelper
                 if (MessageBox.Show("Do you want to apply the mods?", "Mods", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
                 {
 
-                    ModdingApplicationTaskList moddingApplicationTaskList = new ModdingApplicationTaskList(new ModdingProgressTask("Creating backup"), new ModdingProgressTask("Applying backup"), new ModdingProgressTask("Loading assets of Stronghold:Warlords"), new ModdingProgressTask("Applying mods"), new ModdingProgressTask("Merging config.xml files"));
+                    ModdingApplicationTaskList moddingApplicationTaskList = new ModdingApplicationTaskList(new ModdingProgressTask("Creating backup"), new ModdingProgressTask("Applying backup"), new ModdingProgressTask("Loading assets of Stronghold:Warlords"), new ModdingProgressTask("Applying mods"), new ModdingProgressTask("Merging config.xml files"), new ModdingProgressTask("Saving merged language files"));
                     moddingApplicationTaskList.Show();
 
                     Thread executionThread = new Thread(() => 

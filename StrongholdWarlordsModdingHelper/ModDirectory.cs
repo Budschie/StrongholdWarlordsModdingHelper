@@ -108,8 +108,6 @@ namespace StrongholdWarlordsModdingHelper
                     }
                 }
             }
-
-            isDirty = true;
         }
 
         public void SaveModConfiguration()
@@ -133,7 +131,7 @@ namespace StrongholdWarlordsModdingHelper
             }
 
             xmlDocument.Save(modDirectory + "/ModConfig.xml");
-            isDirty = false;
+            isDirty = true;
         }
     }
 

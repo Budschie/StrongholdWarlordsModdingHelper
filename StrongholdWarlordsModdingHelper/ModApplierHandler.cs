@@ -59,6 +59,11 @@ namespace StrongholdWarlordsModdingHelper
             {
                 Copy(assetsFolder + "/castles", assetsFolder + "/castlesBACKUP");
             }
+
+            if(!Directory.Exists(assetsFolder + "/interfaceBACKUP"))
+            {
+                Copy(assetsFolder + "/interface", assetsFolder + "/interfaceBACKUP");
+            }
         }
 
         public void ApplyBackup()
@@ -77,6 +82,9 @@ namespace StrongholdWarlordsModdingHelper
 
                 Directory.Delete(assetsFolder + "/castles", true);
                 Copy(assetsFolder + "/castlesBACKUP", assetsFolder + "/castles");
+
+                Directory.Delete(assetsFolder + "/interface", true);
+                Copy(assetsFolder + "/interfaceBACKUP", assetsFolder + "/interface");
             }
 
         }
@@ -87,6 +95,9 @@ namespace StrongholdWarlordsModdingHelper
         public void ApplyMods(List<Mod> mods, StartTask startTask, FinishTask finishTask)
         {
             HashSet<string> appliedFiles = new HashSet<string>();
+            Dictionary<string, LanguageMerger> computedEntries = new Dictionary<string, LanguageMerger>();
+
+            bool skipLanguage = false;
 
             string xmlFile = File.ReadAllText(assetsFolder + "/config.xml.backup");
 
@@ -157,6 +168,46 @@ namespace StrongholdWarlordsModdingHelper
                                         }
                                     }
                                 }
+                                else if(entry.FullName.StartsWith("interface/i18n") && entry.FullName.EndsWith(".xml") && !skipLanguage)
+                                {
+                                    using (Stream zipStream = entry.Open())
+                                    {
+                                        XmlDocument srcDocument = new XmlDocument();
+                                        srcDocument.Load(zipStream);
+
+                                        XmlDocument targetDocument = new XmlDocument();
+                                        targetDocument.Load(assetsFolder + "/" + entry.FullName);
+
+                                        if (!computedEntries.ContainsKey(assetsFolder + "/" + entry.FullName))
+                                        {
+                                            LanguageMerger merger = new LanguageMerger();
+                                            if (!merger.LoadOriginal(targetDocument))
+                                                skipLanguage = true;
+                                            computedEntries.Add(assetsFolder + "/" + entry.FullName, merger);
+                                        }
+
+                                        if (!skipLanguage)
+                                        {
+                                            LanguageMerger merger = computedEntries[assetsFolder + "/" + entry.FullName];
+
+                                            merger.Merge(srcDocument);
+                                        }
+                                        else
+                                            computedEntries.Clear();
+                                    }
+                                }
+                                else if(entry.FullName.StartsWith("interface") && !entry.FullName.EndsWith("/"))
+                                {
+                                    appliedFiles.Add(entry.FullName);
+
+                                    using (Stream zipStream = entry.Open())
+                                    {
+                                        using (FileStream assetFileStream = new FileStream(assetsFolder + "/" + entry.FullName, FileMode.Create))
+                                        {
+                                            zipStream.CopyTo(assetFileStream);
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
@@ -169,6 +220,25 @@ namespace StrongholdWarlordsModdingHelper
             //xmlDocument.Save(assetsFolder + "/config.xml");
             File.WriteAllText(assetsFolder + "/config.xml", xmlFile);
             finishTask(4);
+
+            startTask(5);
+
+            if(!skipLanguage)
+            {
+                foreach(string path in computedEntries.Keys)
+                {
+                    LanguageMerger merger = computedEntries[path];
+
+                    XmlDocument loadedXMLDocument = new XmlDocument();
+                    loadedXMLDocument.Load(path);
+
+                    merger.ApplyXMLChanges(loadedXMLDocument);
+
+                    loadedXMLDocument.Save(path);
+                }
+            }
+
+            finishTask(5);
 
             // We have to do this as else the memory consumption would be enormous, at around 2 GB AFTER the operation. And if we were to invoke this method more than once, the memory consumption would only rise. So, as a safety measure, we put this statement in.
             System.GC.Collect();
